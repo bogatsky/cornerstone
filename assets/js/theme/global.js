@@ -15,6 +15,10 @@ import 'lazysizes';
 import loadingProgressBar from './global/loading-progress-bar';
 import svgInjector from './global/svg-injector';
 
+// otf checklists
+import './component';
+import checklists from './global/checklists';
+
 export default class Global extends PageManager {
     onReady() {
         // Only load visible elements until the onload event fires,
@@ -34,5 +38,6 @@ export default class Global extends PageManager {
         maintenanceMode(this.context.maintenanceMode);
         loadingProgressBar();
         svgInjector();
+        checklists(this.context);
     }
 }

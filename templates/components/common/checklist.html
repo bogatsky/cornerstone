@@ -1,0 +1,179 @@
+<style>
+	#checklist-wrapper {
+		display:block;
+		height:100vh;
+		position:fixed;
+		left:0;
+		top:0;
+		background:#fff;
+		border-right:solid 2px #333;
+		z-index:99999;
+		padding:0px 15px;
+		width:400px;
+	}
+	
+	.header, .body, .footer {
+		padding-left:400px;
+		
+	}
+	
+	#checklist_app {
+		margin-bottom: 30px;
+	}
+	
+	#active-checklist {
+		margin-top:30px;
+	}
+	
+	table td {
+		padding:5px;
+	}
+	
+	table td input {
+		width:50px;
+	}
+	
+	#newChecklistUI input {
+		margin-bottom: 15px;
+	}
+	
+	#manager-control {
+		margin-top:30px;
+	}
+	
+	.checklist-row-save td {
+	 	text-align: center;
+	}
+	
+	.hide {
+		display:none;
+	}
+	input.qty {
+		padding:5px;
+	}
+	h3, h4 {
+		margin-top:10px;
+		font-size:16px;
+	}
+	
+	.date-wrap {
+		width:48%;
+		margin-left:2%;
+	}
+	#checklistSelector {
+		width:50%;
+	}
+	.checklist-header {
+		display: flex;
+	}
+	
+</style>
+<div id="checklist-wrapper">
+	
+<script type="text/javascript">
+	
+function qtyChange(productId,qty) {
+   document.getElementById('product-item-save'+productId).style.display="block";
+   document.getElementById('product-item-save'+productId).setAttribute('data-qty', qty );
+}
+
+function saveQty(checklistId,productId) {
+	var qty = document.getElementById('product-item-save'+productId).getAttribute('data-qty');
+	console.log(checklistId+','+productId+','+qty);
+	var qtyUrl = 'https://esbtestbigcomm.azurewebsites.net/api/Checklists/'+checklistId+'/products/'+productId;
+	
+	fetch(qtyUrl, {
+		    method: 'PUT',
+		    headers: {
+				'Content-Type': 'application/json',
+            },
+			body: JSON.stringify({ "id": productId, "quantity": qty})
+	    })
+	   .then(function(res){ 
+		   //alert(res);
+		   console.log('qty updated');
+	   });
+	
+	
+	document.getElementById('product-item-save'+productId).style.display="none";
+	
+	
+}
+
+/*
+    function addCardProductToChecklist(productId) {
+	    console.log(productId);
+	    console.log('lets add'+productId);
+	    checklistId = localStorage.getItem('currentChecklist');
+	    var qty = "1";
+	    
+	    var addProductUrl = 'https://esbtestbigcomm.azurewebsites.net/api/Checklists/'+checklistId+'/products';
+	    fetch(addProductUrl, {
+		    method: 'POST',
+		    headers: {
+				'Content-Type': 'application/json',
+            },
+			body: JSON.stringify({ "platformProductId": productId, "quantity": "1" })
+	    })
+	    .then(function(res){
+		    //console.log(res);
+		     return res.text();
+		 })
+	    .then(function(text){
+		    //console.log(res);
+		     alert('product added to checklist', text);
+		     //localStorage.setItem( 'currentChecklist', selector.value );
+		     //checklistapp.render(); 
+		     loadChecklist();
+		     //$('#cancelNewChecklist').click();
+	    })
+	    .catch(function(error) {
+			 console.log('Request failed', error);
+			 //$('#cancelNewChecklist').click();
+  		});
+
+	    
+    }	
+    */
+   
+
+</script>
+
+{{#if customer.id}}
+	
+   <!-- add customer_id into JS-->
+  {{inject "customer_id" customer.id}}	
+	
+  <a id="standaloneLink" >back to dashboard</a>
+  <h4><label>customer:</label> {{customer.id}} {{customer.name}} <br/>studio: <span id="studio-id"></span></h4>
+  
+ 
+ 
+  <div id="checklist-view">
+              
+  				
+            <div id="checklist_app"></div>
+            <div id="newChecklistUI" style="display:none;">
+           	  <input class="form-input" type="text" name="checklist-name-field"  id="checklist-name-field" />
+		   	  <button id="addNewChecklist" class="button button--primary" data-customerid="{{customer.id}}" data-checklistname="studio supplies checklist">Save New Checklist</button>
+		   	  <button id="cancelNewChecklist" class="button button--secondary">Cancel</button> 
+            </div>
+            <button id="openNewChecklistUI" class="button button--secondary">Add New Checklist</button>
+            <button class="button button--secondary">Add to Cart</button>
+            
+            <div id="userControls">
+	            
+            </div>
+  			
+  			
+  			<iframe width="100%" height="100px" src="https://gatsky.com/otf/buttons.php?customer_id={{customer.id}}" frameborder="0" allowfullscreen></iframe>
+  			
+	</div>
+
+{{else}}
+
+	<h4>No Customer, no checklists</h4>
+    username: customer@altusnova.com<br/>
+    password: altus123
+{{/if}}
+</div>
